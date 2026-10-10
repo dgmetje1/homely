@@ -1,0 +1,38 @@
+nav {
+  display: flex;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+
+a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+a.icon-only {
+  padding: 7px 10px;
+}
+
+a[aria-current] {
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 760px) {
+  a {
+    padding: 7px 12px;
+  }
+
+  a:not(.icon-only) app-icon {
+    display: none;
+  }
+}

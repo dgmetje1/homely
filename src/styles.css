@@ -1,0 +1,306 @@
+/* ───────────────────────── Design tokens ───────────────────────── */
+
+:root {
+  --brand: #0f7a62;
+  --surface: #ffffff;
+  --surface-2: #f6f6f7;
+  --text: #1f1f22;
+  --text-muted: #6b6b73;
+  --border: #e5e5e8;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.08), 0 4px 12px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 6px 24px rgb(0 0 0 / 0.12);
+  --radius-lg: 16px;
+  --header-height: 80px;
+  --gutter: clamp(16px, 4vw, 48px);
+
+  --vt-duration: 0.5s;
+  --vt-ease: cubic-bezier(0.22, 0.9, 0.24, 1);
+
+  color-scheme: light;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --header-height: 124px;
+  }
+}
+
+:root[data-theme='dark'] {
+  --brand: #3cc9a2;
+  --surface: #141417;
+  --surface-2: #1e1e23;
+  --text: #f3f3f5;
+  --text-muted: #a2a2ab;
+  --border: #2d2d33;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 8px 28px rgb(0 0 0 / 0.55);
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--text);
+  font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.button {
+  display: inline-flex;
+  padding: 12px 22px;
+  border-radius: 10px;
+  background: var(--text);
+  color: var(--surface);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ───────────────────────── View transitions ─────────────────────────
+ *
+ * Who carries a view-transition-name:
+ *   site-header, toolbar           — chrome that should stay still
+ *   card-<id>      (class .card)   — every listing card, so grids re-flow
+ *   photo-<id>[-n] (class .photo)  — card cover ⇄ detail hero ⇄ gallery thumbs
+ *   title-<id>, price-<id> (.text) — text that travels from card to detail page
+ *   place-<id>, specs-<id> (.text) — card text, so grid ⇄ list morphs cleanly
+ *   category-indicator, deal-pill, view-pill, tab-indicator, cta, result-count
+ *   lightbox, lightbox-ring        — full-screen photo viewer
+ *
+ * Which choreography runs is chosen with :active-view-transition-type(), fed from
+ * withViewTransitions({ onViewTransitionCreated }) and ViewTransitions.run(…, types).
+ */
+
+::view-transition-group(*) {
+  animation-duration: var(--vt-duration);
+  animation-timing-function: var(--vt-ease);
+}
+
+/* Fixed chrome paints above everything that moves underneath it, and the indicators that
+   live inside that chrome paint above the chrome itself. */
+::view-transition-group(site-header),
+::view-transition-group(toolbar) {
+  z-index: 2;
+}
+::view-transition-group(tab-indicator),
+::view-transition-group(category-indicator),
+::view-transition-group(deal-pill),
+::view-transition-group(view-pill) {
+  z-index: 3;
+}
+
+/* Photos: keep them cropped like `object-fit: cover` while the box changes aspect ratio. */
+::view-transition-group(*.photo) {
+  overflow: clip;
+  border-radius: var(--radius-lg);
+}
+::view-transition-old(*.photo),
+::view-transition-new(*.photo) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Text: scale by height and keep the left edge, instead of stretching to the new box. */
+::view-transition-old(*.text),
+::view-transition-new(*.text) {
+  width: auto;
+  height: 100%;
+  object-position: left center;
+}
+
+/* Cards with no counterpart on the other side enter / leave on their own. */
+::view-transition-old(*.card):only-child {
+  animation: vt-card-out 0.22s ease-in both;
+}
+::view-transition-new(*.card):only-child {
+  animation: vt-card-in 0.42s var(--vt-ease) 0.08s both;
+}
+
+/* List ⇄ detail: the page itself fades and drifts, shared elements fly.
+   Only ever one root layer is translucent: the other stays fully opaque underneath. Fading both
+   at once would let their opacities dip below 1 together and the background flash through. */
+html:active-view-transition-type(to-detail, detail-swap)::view-transition-old(root) {
+  animation: none;
+}
+html:active-view-transition-type(to-detail, detail-swap)::view-transition-new(root) {
+  animation: vt-rise-in 0.45s var(--vt-ease) both;
+  mix-blend-mode: normal;
+}
+html:active-view-transition-type(to-list)::view-transition-new(root) {
+  animation: none;
+}
+html:active-view-transition-type(to-list)::view-transition-old(root) {
+  /* Above the new page, so it can sink away and reveal it. */
+  z-index: 1;
+  animation: vt-sink-out 0.3s ease-in both;
+  mix-blend-mode: normal;
+}
+html:active-view-transition-type(to-detail, detail-swap) {
+  --vt-duration: 0.55s;
+}
+
+/* Explore ⇄ Saved: slide in the direction of the tab. */
+html:active-view-transition-type(tab-forward)::view-transition-old(root) {
+  animation: vt-slide-out-left 0.4s var(--vt-ease) both;
+}
+html:active-view-transition-type(tab-forward)::view-transition-new(root) {
+  animation: vt-slide-in-right 0.4s var(--vt-ease) both;
+}
+html:active-view-transition-type(tab-back)::view-transition-old(root) {
+  animation: vt-slide-out-right 0.4s var(--vt-ease) both;
+}
+html:active-view-transition-type(tab-back)::view-transition-new(root) {
+  animation: vt-slide-in-left 0.4s var(--vt-ease) both;
+}
+
+/* Filters, sorting and favourites: snappy, the cards do the talking. */
+html:active-view-transition-type(filter, favorite) {
+  --vt-duration: 0.42s;
+}
+html:active-view-transition-type(filter, favorite)::view-transition-old(root),
+html:active-view-transition-type(filter, favorite)::view-transition-new(root) {
+  animation-duration: 0.2s;
+}
+
+/* Gallery: a little springier, the swapped photos cross paths. */
+html:active-view-transition-type(gallery) {
+  --vt-duration: 0.6s;
+  --vt-ease: cubic-bezier(0.34, 1.25, 0.4, 1);
+}
+
+/* Grid ⇄ list: cards change shape. Draw their snapshots unscaled from the top-left corner
+   (the group clips them) so the text inside doesn't stretch while photos and prices fly. */
+html:active-view-transition-type(layout) {
+  --vt-duration: 0.6s;
+}
+html:active-view-transition-type(layout)::view-transition-group(*.card) {
+  overflow: clip;
+}
+html:active-view-transition-type(layout)::view-transition-old(*.card),
+html:active-view-transition-type(layout)::view-transition-new(*.card) {
+  width: 100%;
+  height: 100%;
+  object-fit: none;
+  object-position: left top;
+}
+
+/* Lightbox: the dark viewer is its own group above the header; the photo flies above it. */
+::view-transition-group(lightbox) {
+  z-index: 4;
+}
+html:active-view-transition-type(lightbox-open, lightbox-close, photo-next, photo-prev)::view-transition-group(*.photo) {
+  z-index: 5;
+}
+::view-transition-group(lightbox-ring) {
+  z-index: 6;
+}
+html:active-view-transition-type(lightbox-open)::view-transition-new(lightbox) {
+  animation: vt-fade-in 0.3s ease-out both;
+}
+html:active-view-transition-type(lightbox-close)::view-transition-old(lightbox) {
+  animation: vt-fade-out 0.3s ease-in both;
+}
+
+/* Paging inside the lightbox: photos have different names, so each one only exists on one side
+   of the transition. :only-child targets exactly those and slides them in the paging direction. */
+html:active-view-transition-type(photo-next, photo-prev)::view-transition-group(*.photo) {
+  overflow: visible;
+  animation-duration: 0.4s;
+}
+html:active-view-transition-type(photo-next)::view-transition-old(*.photo):only-child {
+  animation: vt-photo-out-left 0.4s var(--vt-ease) both;
+}
+html:active-view-transition-type(photo-next)::view-transition-new(*.photo):only-child {
+  animation: vt-photo-in-right 0.4s var(--vt-ease) both;
+}
+html:active-view-transition-type(photo-prev)::view-transition-old(*.photo):only-child {
+  animation: vt-photo-out-right 0.4s var(--vt-ease) both;
+}
+html:active-view-transition-type(photo-prev)::view-transition-new(*.photo):only-child {
+  animation: vt-photo-in-left 0.4s var(--vt-ease) both;
+}
+
+/* Theme: circular reveal driven from ThemeService (Web Animations on ::view-transition-new(root)). */
+html.vt-theme * {
+  view-transition-name: none !important;
+}
+html:active-view-transition-type(theme)::view-transition-old(root),
+html:active-view-transition-type(theme)::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+}
+@keyframes vt-fade-out {
+  to { opacity: 0; }
+}
+@keyframes vt-rise-in {
+  from { opacity: 0; transform: translateY(24px); }
+}
+@keyframes vt-sink-out {
+  to { opacity: 0; transform: translateY(16px); }
+}
+@keyframes vt-card-out {
+  to { opacity: 0; transform: scale(0.88); }
+}
+@keyframes vt-card-in {
+  from { opacity: 0; transform: scale(0.9) translateY(12px); }
+}
+@keyframes vt-slide-out-left {
+  to { opacity: 0; transform: translateX(-60px); }
+}
+@keyframes vt-slide-in-right {
+  from { opacity: 0; transform: translateX(60px); }
+}
+@keyframes vt-slide-out-right {
+  to { opacity: 0; transform: translateX(60px); }
+}
+@keyframes vt-photo-out-left {
+  to { opacity: 0; transform: translateX(-18vw) scale(0.94); }
+}
+@keyframes vt-photo-in-right {
+  from { opacity: 0; transform: translateX(18vw) scale(0.94); }
+}
+@keyframes vt-photo-out-right {
+  to { opacity: 0; transform: translateX(18vw) scale(0.94); }
+}
+@keyframes vt-photo-in-left {
+  from { opacity: 0; transform: translateX(-18vw) scale(0.94); }
+}
+@keyframes vt-slide-in-left {
+  from { opacity: 0; transform: translateX(-60px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

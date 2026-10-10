@@ -1,0 +1,63 @@
+@let l = listing();
+<a class="link" [routerLink]="['/listing', l.id]">
+  <div class="media">
+    <img
+      [src]="cover()"
+      [alt]="l.title"
+      width="800"
+      height="600"
+      [attr.loading]="eager() ? 'eager' : 'lazy'"
+      [style.view-transition-name]="names().photo"
+      style="view-transition-class: photo"
+    />
+    @if (l.badge) {
+      <span class="badge">{{ l.badge }}</span>
+    }
+    <span class="deal" [class.sale]="l.deal === 'sale'">
+      {{ l.deal === 'rent' ? 'For rent' : 'For sale' }}
+    </span>
+  </div>
+
+  <div class="body">
+    <div class="row">
+      <h3>
+        <span class="vt-text" [style.view-transition-name]="names().place" style="view-transition-class: text">
+          {{ l.neighbourhood }}, {{ l.city }}
+        </span>
+      </h3>
+      <span class="rating"><app-icon name="star" [size]="14" />{{ l.rating.toFixed(2) }}</span>
+    </div>
+    <p class="muted">
+      <span class="vt-text" [style.view-transition-name]="names().title" style="view-transition-class: text">
+        {{ l.title }}
+      </span>
+    </p>
+    <p class="muted">
+      <span class="vt-text" [style.view-transition-name]="names().specs" style="view-transition-class: text">
+        {{ l.bedrooms }} bd · {{ l.bathrooms }} ba · {{ l.area }} m²
+      </span>
+    </p>
+    @if (layout() === 'list') {
+      <p class="excerpt">{{ l.description }}</p>
+    }
+    <p class="price">
+      <strong [style.view-transition-name]="names().price" style="view-transition-class: text">
+        {{ l.price | euros }}
+      </strong>
+      @if (l.deal === 'rent') {
+        <span class="muted"> / month</span>
+      }
+    </p>
+  </div>
+</a>
+
+<button
+  type="button"
+  class="fav"
+  [class.on]="saved()"
+  [attr.aria-pressed]="saved()"
+  [attr.aria-label]="saved() ? 'Remove from saved' : 'Save'"
+  (click)="favorites.toggle(l.id)"
+>
+  <app-icon name="bookmark" [size]="18" />
+</button>

@@ -1,0 +1,89 @@
+:host {
+  position: sticky;
+  top: var(--header-height);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 14px var(--gutter);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  view-transition-name: toolbar;
+}
+
+.categories {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* Room for the chips' focus ring inside the scroll container. */
+  padding: 2px;
+  mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+}
+
+.category {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.category:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+.category[aria-current] {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sort select {
+  appearance: none;
+  padding: 9px 34px 9px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='3'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 14px center;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 760px) {
+  :host {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
+
+  .controls {
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .sort select {
+    max-width: 46vw;
+  }
+}

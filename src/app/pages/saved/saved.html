@@ -1,0 +1,21 @@
+<section class="page">
+  <h1>Saved homes</h1>
+  @if (saved().length) {
+    <p class="lead">
+      {{ saved().length }} {{ saved().length === 1 ? 'home' : 'homes' }} on your shortlist.
+      Tap a bookmark to remove one and watch the grid close the gap.
+    </p>
+    <div class="grid">
+      @for (listing of saved(); track listing.id) {
+        <app-listing-card [listing]="listing" />
+      }
+    </div>
+  } @else {
+    <div class="empty">
+      <app-icon name="bookmark" [size]="40" />
+      <h2>Nothing saved yet</h2>
+      <p>Bookmark any home to keep it here.</p>
+      <a class="button" routerLink="/">Start exploring</a>
+    </div>
+  }
+</section>

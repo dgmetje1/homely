@@ -1,0 +1,8 @@
+@if (similar().length) {
+  <h2>Similar homes {{ listing().deal === 'rent' ? 'for rent' : 'for sale' }}</h2>
+  <div class="similar-grid">
+    @for (s of similar(); track s.id) {
+      <app-listing-card [listing]="s" />
+    }
+  </div>
+}

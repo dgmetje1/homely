@@ -1,0 +1,16 @@
+:host {
+  display: block;
+  margin-top: 48px;
+}
+
+.similar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+h2 {
+  margin: 0 0 16px;
+  font-size: 1.3rem;
+  font-weight: 600;
+}

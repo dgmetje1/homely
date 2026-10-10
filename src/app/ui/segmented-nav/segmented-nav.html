@@ -1,0 +1,16 @@
+<nav [attr.aria-label]="label()">
+  @for (option of options(); track option.icon) {
+    <a
+      [routerLink]="[]"
+      [queryParams]="option.queryParams"
+      queryParamsHandling="merge"
+      [attr.aria-current]="option.active ? 'page' : null"
+      [attr.aria-label]="option.ariaLabel ?? null"
+      [class.icon-only]="!option.label"
+      [style.view-transition-name]="option.active ? pillName() : null"
+    >
+      <app-icon [name]="option.icon" [size]="16" />
+      {{ option.label }}
+    </a>
+  }
+</nav>

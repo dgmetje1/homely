@@ -1,0 +1,42 @@
+@let current = state();
+
+<nav class="categories" aria-label="Property type">
+  <a
+    class="category"
+    [routerLink]="[]"
+    [queryParams]="{ type: null }"
+    queryParamsHandling="merge"
+    [attr.aria-current]="!current.type ? 'page' : null"
+    [style.view-transition-name]="!current.type ? 'category-indicator' : null"
+  >
+    <app-icon name="grid" [size]="18" />
+    <span>All homes</span>
+  </a>
+  @for (t of types; track t.value) {
+    <!-- Only the active chip is named, so the highlight morphs from the old chip to the new. -->
+    <a
+      class="category"
+      [routerLink]="[]"
+      [queryParams]="{ type: t.value }"
+      queryParamsHandling="merge"
+      [attr.aria-current]="current.type === t.value ? 'page' : null"
+      [style.view-transition-name]="current.type === t.value ? 'category-indicator' : null"
+    >
+      <app-icon [name]="t.icon" [size]="18" />
+      <span>{{ t.label }}</span>
+    </a>
+  }
+</nav>
+
+<div class="controls">
+  <app-segmented-nav label="Rent or buy" pillName="deal-pill" [options]="dealOptions()" />
+
+  <label class="sort">
+    <span class="visually-hidden">Sort by</span>
+    <select [value]="current.sort" (change)="onSort($any($event.target).value)">
+      @for (s of sortOptions; track s.value) {
+        <option [value]="s.value">{{ s.label }}</option>
+      }
+    </select>
+  </label>
+</div>

@@ -1,0 +1,74 @@
+@if (listing(); as l) {
+  <article class="page">
+    <div class="topbar">
+      <button type="button" class="ghost" (click)="back()">
+        <app-icon name="arrow-left" [size]="18" /> Back
+      </button>
+      <button
+        type="button"
+        class="ghost"
+        [class.saved]="favorites.has(l.id)"
+        [attr.aria-pressed]="favorites.has(l.id)"
+        (click)="favorites.toggle(l.id)"
+      >
+        <app-icon name="bookmark" [size]="18" /> {{ favorites.has(l.id) ? 'Saved' : 'Save' }}
+      </button>
+    </div>
+
+    <h1>
+      <span [style.view-transition-name]="titleName()" style="view-transition-class: text">{{ l.title }}</span>
+    </h1>
+    <p class="meta">
+      <span class="rating"><app-icon name="star" [size]="14" /> {{ l.rating.toFixed(2) }}</span>
+      · <span class="underline">{{ l.reviews }} reviews</span> ·
+      <span class="underline">{{ l.neighbourhood }}, {{ l.city }}, {{ l.country }}</span>
+    </p>
+
+    <app-photo-gallery [listing]="l" />
+
+    <div class="columns">
+      <div class="info">
+        <section class="summary">
+          <h2>{{ typeLabel() }} in {{ l.neighbourhood }}</h2>
+          <ul class="specs">
+            <li><app-icon name="bed" /> {{ l.bedrooms }} {{ l.bedrooms === 1 ? 'bedroom' : 'bedrooms' }}</li>
+            <li><app-icon name="bath" /> {{ l.bathrooms }} {{ l.bathrooms === 1 ? 'bathroom' : 'bathrooms' }}</li>
+            <li><app-icon name="area" /> {{ l.area }} m²</li>
+          </ul>
+        </section>
+
+        <section class="agent">
+          <span class="avatar" aria-hidden="true">{{ l.agent.name[0] }}</span>
+          <div>
+            <strong>Listed by {{ l.agent.name }}</strong>
+            <p>{{ l.agent.agency }} · {{ l.agent.yearsActive }} years on homely</p>
+          </div>
+        </section>
+
+        <section>
+          <h2>About this home</h2>
+          <p class="description">{{ l.description }}</p>
+        </section>
+
+        <section>
+          <h2>Features &amp; amenities</h2>
+          <app-amenity-list [amenities]="l.amenities" />
+        </section>
+      </div>
+
+      <app-booking-panel [listing]="l" />
+    </div>
+
+    <!-- Below the fold: its code and images load only when the reader scrolls near it. -->
+    @defer (on viewport) {
+      <app-similar-listings [listing]="l" />
+    } @placeholder {
+      <div class="similar-placeholder"></div>
+    }
+  </article>
+} @else {
+  <section class="missing">
+    <h1>This home is no longer listed</h1>
+    <a class="button" routerLink="/">Explore other homes</a>
+  </section>
+}

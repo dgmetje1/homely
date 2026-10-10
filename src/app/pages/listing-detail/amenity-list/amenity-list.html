@@ -1,0 +1,5 @@
+<ul>
+  @for (item of items(); track item.icon) {
+    <li><app-icon [name]="item.icon" [size]="24" /> {{ item.label }}</li>
+  }
+</ul>

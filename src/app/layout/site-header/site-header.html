@@ -1,0 +1,50 @@
+<a class="logo" routerLink="/" aria-label="homely, home">
+  <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
+    <path fill-rule="evenodd" d="M16 2 1 14h4.5v15h21V14H31zm-3.5 14h7v7h-7z" />
+  </svg>
+  <span>homely</span>
+</a>
+
+<label class="search">
+  <app-icon name="search" [size]="18" />
+  <span class="visually-hidden">Search by city or neighbourhood</span>
+  <input
+    type="search"
+    placeholder="Search Lisbon, Marais, villa…"
+    [value]="search()"
+    (input)="onSearch($any($event.target).value)"
+  />
+</label>
+
+<nav class="tabs" aria-label="Main">
+  <a
+    routerLink="/"
+    routerLinkActive
+    #explore="routerLinkActive"
+    [routerLinkActiveOptions]="exploreMatch"
+    ariaCurrentWhenActive="page"
+  >
+    Explore
+    @if (explore.isActive) {
+      <i class="tab-indicator"></i>
+    }
+  </a>
+  <a routerLink="/saved" routerLinkActive #saved="routerLinkActive" ariaCurrentWhenActive="page">
+    Saved
+    @if (favorites.count()) {
+      <span class="count">{{ favorites.count() }}</span>
+    }
+    @if (saved.isActive) {
+      <i class="tab-indicator"></i>
+    }
+  </a>
+</nav>
+
+<button
+  type="button"
+  class="theme"
+  [attr.aria-label]="theme.theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+  (click)="toggleTheme($event)"
+>
+  <app-icon [name]="theme.theme() === 'dark' ? 'sun' : 'moon'" />
+</button>

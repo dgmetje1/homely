@@ -1,0 +1,33 @@
+@let current = state();
+
+<app-explore-toolbar [state]="current" />
+
+<section class="results" aria-live="polite">
+  <div class="results-head">
+    <p class="count">
+      <span class="count-text">
+        {{ results().length }} {{ results().length === 1 ? 'home' : 'homes' }}
+        @if (current.q) {
+          matching “{{ current.q }}”
+        }
+      </span>
+    </p>
+    <!-- Switching layout keeps every card's view-transition-name, so cards morph between layouts. -->
+    <app-segmented-nav label="Layout" pillName="view-pill" [options]="viewOptions()" />
+  </div>
+
+  @if (results().length) {
+    <div class="grid" [class.list]="current.view === 'list'">
+      @for (listing of results(); track listing.id) {
+        <app-listing-card [listing]="listing" [layout]="current.view" [eager]="$index < 4" />
+      }
+    </div>
+  } @else {
+    <div class="empty">
+      <app-icon name="search" [size]="40" />
+      <h2>No homes match these filters</h2>
+      <p>Try another city, or clear a filter.</p>
+      <a class="button" routerLink="/">Clear all filters</a>
+    </div>
+  }
+</section>

@@ -1,0 +1,152 @@
+:host {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: var(--header-height);
+  padding: 0 var(--gutter);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  /* Named, so it stays put while the page underneath transitions. */
+  view-transition-name: site-header;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--brand);
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  text-decoration: none;
+}
+
+.logo svg {
+  fill: currentColor;
+}
+
+.search {
+  flex: 1;
+  max-width: 420px;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px 0 18px;
+  height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s;
+}
+
+.search:focus-within {
+  box-shadow: var(--shadow-lg);
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-weight: 500;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.tabs a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.tabs a:hover {
+  background: var(--surface-2);
+}
+
+.tabs a[aria-current] {
+  color: var(--text);
+}
+
+.tab-indicator {
+  position: absolute;
+  inset: auto 14px 2px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--brand);
+  view-transition-name: tab-indicator;
+}
+
+.count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 0.72rem;
+}
+
+.theme {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.theme:hover {
+  background: var(--surface-2);
+}
+
+@media (max-width: 760px) {
+  :host {
+    flex-wrap: wrap;
+    gap: 10px 8px;
+    padding-block: 12px;
+  }
+
+  .logo {
+    margin-right: auto;
+  }
+
+  .search {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+    height: 44px;
+  }
+
+  .tabs a {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 440px) {
+  .logo span {
+    display: none;
+  }
+}

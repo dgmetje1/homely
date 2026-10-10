@@ -1,0 +1,33 @@
+@let l = listing();
+
+<p class="price">
+  <strong [style.view-transition-name]="priceName()" style="view-transition-class: text">{{ l.price | euros }}</strong>
+  @if (l.deal === 'rent') {
+    <span> / month</span>
+  }
+</p>
+
+<dl>
+  @if (l.deal === 'rent') {
+    <div><dt>Available</dt><dd>From next month</dd></div>
+    <div><dt>Deposit</dt><dd>{{ l.price * 2 | euros }}</dd></div>
+    <div><dt>Minimum stay</dt><dd>12 months</dd></div>
+  } @else {
+    <div><dt>Price per m²</dt><dd>{{ l.price / l.area | euros }}</dd></div>
+    <div><dt>Est. mortgage</dt><dd>{{ mortgage() | euros }} / month</dd></div>
+    <div><dt>Assumes</dt><dd>20% down · 3.2% · 30 yrs</dd></div>
+  }
+</dl>
+
+@if (requested()) {
+  <div class="cta done" role="status">
+    <strong>{{ l.deal === 'rent' ? 'Visit requested' : 'Message sent' }}</strong>
+    <span>{{ l.agent.name }} usually replies within a few hours.</span>
+  </div>
+} @else {
+  <button type="button" class="cta" (click)="request()">
+    <app-icon [name]="l.deal === 'rent' ? 'calendar' : 'tag'" [size]="18" />
+    {{ l.deal === 'rent' ? 'Request a visit' : 'Contact agent' }}
+  </button>
+}
+<p class="fine">Free to enquire · no commitment</p>

@@ -1,0 +1,51 @@
+@if (listing(); as l) {
+  <header class="bar">
+    <button type="button" class="round" aria-label="Close" (click)="close()">
+      <app-icon name="close" />
+    </button>
+    <p class="counter" aria-live="polite">{{ current() + 1 }} / {{ count() }}</p>
+    <a class="title" [routerLink]="['/listing', l.id]" replaceUrl>{{ l.title }}</a>
+  </header>
+
+  <div class="stage" (pointerdown)="swipeStart($event)" (pointerup)="swipeEnd($event)">
+    <button type="button" class="round nav prev" aria-label="Previous photo" (click)="go(-1)">
+      <app-icon name="chevron-left" />
+    </button>
+
+    @if (photo(); as p) {
+      <img
+        [src]="p.src"
+        [alt]="l.title + ', photo ' + (current() + 1)"
+        width="1600"
+        height="1200"
+        decoding="sync"
+        draggable="false"
+        [style.view-transition-name]="p.name"
+        style="view-transition-class: photo"
+      />
+    }
+
+    <button type="button" class="round nav next" aria-label="Next photo" (click)="go(1)">
+      <app-icon name="chevron-right" />
+    </button>
+  </div>
+
+  <nav class="strip" aria-label="All photos">
+    @for (t of thumbs(); track $index) {
+      <button
+        type="button"
+        [attr.aria-label]="'Photo ' + ($index + 1)"
+        [attr.aria-current]="t.active ? 'true' : null"
+        (click)="show($index)"
+      >
+        <img [src]="t.src" alt="" width="800" height="600" />
+        @if (t.active) {
+          <!-- One ring at a time: it glides to the newly selected thumbnail. -->
+          <i class="ring"></i>
+        }
+      </button>
+    }
+  </nav>
+} @else {
+  <p class="missing">This home is no longer listed. <a routerLink="/">Explore other homes</a></p>
+}

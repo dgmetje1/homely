@@ -1,0 +1,47 @@
+@let l = listing();
+@let hero = slots()[0];
+
+<div class="gallery">
+  <figure class="hero">
+    <a
+      [routerLink]="['/listing', l.id, 'photos', hero.index]"
+      [state]="{ fromDetail: true }"
+      [attr.aria-label]="'Open photo ' + (hero.index + 1) + ' full screen'"
+    >
+      <img
+        [src]="hero.src"
+        [alt]="l.title"
+        width="800"
+        height="600"
+        decoding="sync"
+        [style.view-transition-name]="hero.name"
+        style="view-transition-class: photo"
+      />
+    </a>
+    <span class="deal" [class.sale]="l.deal === 'sale'">
+      {{ l.deal === 'rent' ? 'For rent' : 'For sale' }}
+    </span>
+  </figure>
+
+  @for (thumb of slots().slice(1); track $index) {
+    <button
+      type="button"
+      class="thumb"
+      [attr.aria-label]="'Show photo ' + (thumb.index + 1)"
+      (click)="show($index + 1)"
+    >
+      <img
+        [src]="thumb.src"
+        alt=""
+        width="800"
+        height="600"
+        [style.view-transition-name]="thumb.name"
+        style="view-transition-class: photo"
+      />
+    </button>
+  }
+
+  <a class="all-photos" [routerLink]="['/listing', l.id, 'photos', hero.index]" [state]="{ fromDetail: true }">
+    <app-icon name="images" [size]="16" /> Show all photos
+  </a>
+</div>
